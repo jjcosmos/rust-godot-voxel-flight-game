@@ -44,6 +44,8 @@ impl IRigidBody3D for Player {
             let timer_callback = Callable::from_object_method(&self.to_gd(), "on_timer_timeout");
             timer.connect("timeout".into(), timer_callback);
         }
+
+        self.base_mut().set_freeze_enabled(true);
     }
 
     fn process(&mut self, _delta: f64) {
@@ -110,10 +112,11 @@ impl Player {
     }
 
     #[func]
-    fn on_timer_timeout(&mut self) {
+    pub fn on_timer_timeout(&mut self) {
         godot_print!("Respawning");
         self.base_mut().set_global_position(Vector3::ZERO);
         self.base_mut().set_freeze_enabled(false);
         self.base_mut().set_visible(true);
+        self.base_mut().emit_signal("player_reset".into(), &[]);
     }
 }
