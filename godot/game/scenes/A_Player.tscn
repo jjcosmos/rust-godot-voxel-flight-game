@@ -1,0 +1,62 @@
+[gd_scene load_steps=10 format=3 uid="uid://d3lvfs15cr1aw"]
+
+[ext_resource type="PackedScene" uid="uid://b8h5rbnduiktg" path="res://game/scenes/FX_Explosion.tscn" id="1_v3opp"]
+[ext_resource type="Script" path="res://game/scenes/a_player.gd" id="2_ik6yk"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_2x886"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_68t0c"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_105l1"]
+albedo_color = Color(0.90321, 0, 0.107648, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_pjqaj"]
+material = SubResource("StandardMaterial3D_105l1")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3se31"]
+size = Vector3(4, 0.2, 0.9)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_58yrd"]
+albedo_color = Color(0.0729295, 0.363807, 0.747272, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ske5f"]
+material = SubResource("StandardMaterial3D_58yrd")
+size = Vector3(4, 0.2, 0.9)
+
+[node name="APlayer" type="Player" node_paths=PackedStringArray("camera_target", "respawn_timer")]
+roll_speed_h = 4.0
+pitch_speed_v = 0.6
+yaw_speed_h = 4.0
+camera_target = NodePath("CameraTarget")
+explosion_scene = ExtResource("1_v3opp")
+respawn_timer = NodePath("Timer")
+physics_interpolation_mode = 1
+physics_material_override = SubResource("PhysicsMaterial_2x886")
+center_of_mass_mode = 1
+continuous_cd = true
+contact_monitor = true
+max_contacts_reported = 1
+linear_damp = 4.0
+angular_damp = 4.0
+script = ExtResource("2_ik6yk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_68t0c")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_pjqaj")
+
+[node name="CameraTarget" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.80129)
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_3se31")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="CollisionShape3D2"]
+mesh = SubResource("BoxMesh_ske5f")
+skeleton = NodePath("../..")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true

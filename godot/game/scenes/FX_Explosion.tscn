@@ -1,0 +1,62 @@
+[gd_scene load_steps=11 format=3 uid="uid://b8h5rbnduiktg"]
+
+[ext_resource type="Script" path="res://game/scripts/one_shot_emit.gd" id="1_x57xa"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ww4b7"]
+transparency = 1
+blend_mode = 4
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_texture_force_srgb = true
+billboard_mode = 1
+
+[sub_resource type="Curve" id="Curve_5ysfi"]
+_data = [Vector2(0, 0.957025), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_fh568"]
+curve = SubResource("Curve_5ysfi")
+
+[sub_resource type="Gradient" id="Gradient_v2qf3"]
+colors = PackedColorArray(0.941855, 0, 0.190842, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_qsvvl"]
+gradient = SubResource("Gradient_v2qf3")
+
+[sub_resource type="Curve" id="Curve_j1r6a"]
+max_value = 20.0
+_data = [Vector2(0.00395257, 0.452066), 0.0, 0.0, 0, 0, Vector2(0.837945, 3.02479), 0.0, 0.0, 0, 0, Vector2(1, 0.661156), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_07uey"]
+curve = SubResource("Curve_j1r6a")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sucuq"]
+emission_shape = 1
+emission_sphere_radius = 2.0
+angle_min = -720.0
+angle_max = 720.0
+spread = 180.0
+initial_velocity_min = 17.3
+initial_velocity_max = 69.21
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_07uey")
+color_ramp = SubResource("GradientTexture1D_qsvvl")
+alpha_curve = SubResource("CurveTexture_fh568")
+hue_variation_min = -0.08
+hue_variation_max = 0.1
+turbulence_noise_strength = 0.1
+
+[sub_resource type="QuadMesh" id="QuadMesh_3ggpw"]
+
+[node name="FxExplosion" type="Node3D"]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+material_override = SubResource("StandardMaterial3D_ww4b7")
+emitting = false
+amount = 40
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_sucuq")
+draw_pass_1 = SubResource("QuadMesh_3ggpw")
+script = ExtResource("1_x57xa")

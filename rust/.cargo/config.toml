@@ -1,0 +1,17 @@
+[target.wasm32-unknown-emscripten]
+rustflags = [
+  "-C",
+  "link-args=-sSIDE_MODULE=2",
+  ## UNCOMMENT TO RE-ENABLE THREADING
+  ## "-C", "link-args=-pthread",  # was -sUSE_PTHREADS=1 in earlier emscripten versions
+  "-C",
+  "target-feature=+atomics,+bulk-memory,+mutable-globals",
+  "-Cllvm-args=-enable-emscripten-cxx-exceptions=0",
+  "-Zlink-native-libraries=no",
+]
+
+## Threads in web also need to be enabled for anything to work. Idk why
+## https://github.com/godot-rust/gdext/issues/438#issuecomment-2220941486
+
+## UNLESS you remove pthread bit above, and the "lazy-function-tables" feature in cargo.toml
+## https://github.com/godot-rust/gdext/pull/794#issue-2401359857

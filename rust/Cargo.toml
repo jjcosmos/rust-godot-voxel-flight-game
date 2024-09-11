@@ -1,0 +1,17 @@
+[package]
+name = "rust_cube_runner"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]  # Compile this crate to a dynamic C library.
+
+[dependencies.godot]
+git = "https://github.com/godot-rust/gdext"
+branch = "master"
+features = ["experimental-wasm"]
+
+## UNCOMMMENT TO RE-ENABLE THREADING
+## features = ["experimental-wasm", "lazy-function-tables"] ## not compatable with pthread flag
+
+## cargo +nightly build -Zbuild-std --target wasm32-unknown-emscripten

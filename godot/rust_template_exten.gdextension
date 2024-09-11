@@ -1,0 +1,16 @@
+[configuration]
+entry_symbol = "gdext_rust_init"
+compatibility_minimum = 4.1
+reloadable = true
+
+[libraries]
+linux.debug.x86_64 =     "res://../rust/target/debug/librust_cube_runner.so"
+linux.release.x86_64 =   "res://../rust/target/release/librust_cube_runner.so"
+windows.debug.x86_64 =   "res://../rust/target/debug/rust_cube_runner.dll"
+windows.release.x86_64 = "res://../rust/target/release/rust_cube_runner.dll"
+macos.debug =            "res://../rust/target/debug/librust_cube_runner.dylib"
+macos.release =          "res://../rust/target/release/librust_cube_runner.dylib"
+macos.debug.arm64 =      "res://../rust/target/debug/librust_cube_runner.dylib"
+macos.release.arm64 =    "res://../rust/target/release/librust_cube_runner.dylib"
+web.debug.wasm32 =       "res://../rust/target/wasm32-unknown-emscripten/debug/rust_cube_runner.wasm"
+web.release.wasm32 =     "res://../rust/target/wasm32-unknown-emscripten/release/rust_cube_runner.wasm"

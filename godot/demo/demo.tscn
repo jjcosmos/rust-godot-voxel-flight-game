@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://yhe6mvw8i5jr"]
+
+[ext_resource type="Script" path="res://demo/demo_script.gd" id="1_mtxah"]
+[ext_resource type="Texture2D" uid="uid://jv7j31ye5ahn" path="res://icon.svg" id="2_scom8"]
+
+[node name="Node2D" type="Node2D" node_paths=PackedStringArray("demo_obj")]
+script = ExtResource("1_mtxah")
+demo_obj = NodePath("Demo")
+
+[node name="Demo" type="Demo" parent="."]
+position = Vector2(494, 337)
+texture = ExtResource("2_scom8")
