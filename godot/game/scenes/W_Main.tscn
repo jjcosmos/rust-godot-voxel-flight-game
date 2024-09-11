@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://wrnlye8rgmwy"]
+[gd_scene load_steps=8 format=3 uid="uid://wrnlye8rgmwy"]
 
 [ext_resource type="Script" path="res://game/scripts/debug_info.gd" id="1_21kh3"]
 [ext_resource type="PackedScene" uid="uid://d3lvfs15cr1aw" path="res://game/scenes/A_Player.tscn" id="1_gcqne"]
 [ext_resource type="Script" path="res://game/scripts/load_progress_bar.gd" id="3_vgxwq"]
+[ext_resource type="PackedScene" uid="uid://b8h5rbnduiktg" path="res://game/scenes/FX_Explosion.tscn" id="4_3ke2i"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hde33"]
 sky_top_color = Color(0.221827, 0.270508, 0.338211, 1)
@@ -93,7 +94,10 @@ grow_vertical = 0
 value = 0.5
 script = ExtResource("3_vgxwq")
 
+[node name="FxExplosion" parent="." instance=ExtResource("4_3ke2i")]
+
+[connection signal="player_reset" from="APlayer" to="Camera3D" method="reset_cam"]
 [connection signal="current_chunk_changed" from="CubeSpawner" to="Control2/Label" method="_on_cube_spawner_current_chunk_changed"]
-[connection signal="load_complete" from="CubeSpawner" to="APlayer" method="_on_cube_spawner_load_complete"]
+[connection signal="load_complete" from="CubeSpawner" to="APlayer" method="on_timer_timeout"]
 [connection signal="load_complete" from="CubeSpawner" to="Control/ProgressBar" method="_on_cube_spawner_load_complete"]
 [connection signal="load_progress_updated" from="CubeSpawner" to="Control/ProgressBar" method="_on_cube_spawner_load_progress_updated"]

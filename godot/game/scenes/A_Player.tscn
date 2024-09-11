@@ -1,7 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://d3lvfs15cr1aw"]
+[gd_scene load_steps=9 format=3 uid="uid://d3lvfs15cr1aw"]
 
 [ext_resource type="PackedScene" uid="uid://b8h5rbnduiktg" path="res://game/scenes/FX_Explosion.tscn" id="1_v3opp"]
-[ext_resource type="Script" path="res://game/scenes/a_player.gd" id="2_ik6yk"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_2x886"]
 
@@ -38,7 +37,6 @@ contact_monitor = true
 max_contacts_reported = 1
 linear_damp = 4.0
 angular_damp = 4.0
-script = ExtResource("2_ik6yk")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_68t0c")

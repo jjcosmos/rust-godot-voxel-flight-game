@@ -6,4 +6,4 @@ func _ready() -> void:
 
 
 func on_finish() -> void:
-	queue_free()
+	get_parent().queue_free()
