@@ -19,6 +19,18 @@ pub struct Player {
     explosion_scene: Option<Gd<PackedScene>>,
     #[export]
     respawn_timer: Option<Gd<Timer>>,
+
+    #[export]
+    close_points_per_sec: f32,
+    #[export]
+    far_points_per_sec: f32,
+
+    score: f32,
+    close_overlap: Option<Gd<Node>>,
+    far_overlap: Option<Gd<Node>>,
+
+    #[export]
+    pub is_dead: bool,
 }
 
 #[godot_api]
@@ -32,6 +44,12 @@ impl IRigidBody3D for Player {
             forward_force: 5000.0,
             explosion_scene: None,
             respawn_timer: None,
+            close_overlap: None,
+            far_overlap: None,
+            close_points_per_sec: 10.0,
+            far_points_per_sec: 5.0,
+            score: 0.0,
+            is_dead: false,
             base,
         }
     }
@@ -48,7 +66,7 @@ impl IRigidBody3D for Player {
         self.base_mut().set_freeze_enabled(true);
     }
 
-    fn process(&mut self, _delta: f64) {
+    fn process(&mut self, delta: f64) {
         let input = Input::singleton();
         // Inverted Y by default
         let vertical_input = input.get_axis("v_negative".into(), "v_positive".into());
@@ -57,21 +75,35 @@ impl IRigidBody3D for Player {
 
         let torque_roll = self.base().get_global_basis().col_c()
             * horizontal2_input
-            //* delta as f32
+            * delta as f32
             * self.get_roll_speed_h();
         self.base_mut().apply_torque(-torque_roll);
 
         let torque_yaw = self.base().get_global_basis().col_b()
             * horizontal_input
-            //* delta as f32
+            * delta as f32
             * self.get_yaw_speed_h();
         self.base_mut().apply_torque(-torque_yaw);
 
         let torque_pitch = self.base().get_global_basis().col_a()
             * vertical_input
-            //* delta as f32
+            * delta as f32
             * self.get_pitch_speed_v();
         self.base_mut().apply_torque(-torque_pitch);
+
+        if !self.base().is_freeze_enabled() {
+            let old_score = self.score as i32;
+            if let Some(_close) = &self.close_overlap {
+                self.score += self.close_points_per_sec * delta as f32;
+            } else if let Some(_far) = &self.far_overlap {
+                self.score += self.far_points_per_sec * delta as f32;
+            }
+            let new = self.score as i32;
+            if old_score != new {
+                self.base_mut()
+                    .emit_signal("score_updated".into(), &[new.to_variant()]);
+            }
+        }
     }
 
     fn physics_process(&mut self, delta: f64) {
@@ -88,6 +120,9 @@ impl IRigidBody3D for Player {
 impl Player {
     #[signal]
     fn player_reset() {}
+
+    #[signal]
+    fn score_updated(new_score: i32) {}
 
     // func is necessary to be callable from gd / signals
     #[func]
@@ -109,6 +144,8 @@ impl Player {
         if let Some(mut timer) = self.get_respawn_timer() {
             timer.start();
         }
+
+        self.is_dead = true;
     }
 
     #[func]
@@ -118,5 +155,31 @@ impl Player {
         self.base_mut().set_freeze_enabled(false);
         self.base_mut().set_visible(true);
         self.base_mut().emit_signal("player_reset".into(), &[]);
+
+        self.score = 0.0;
+        self.base_mut()
+            .emit_signal("score_updated".into(), &[0_i32.to_variant()]);
+
+        self.is_dead = false;
+    }
+
+    #[func]
+    pub fn on_close_body_overlap(&mut self, node: Gd<Node>) {
+        self.close_overlap = Some(node);
+    }
+
+    #[func]
+    pub fn on_close_body_exit(&mut self, _node: Gd<Node>) {
+        self.close_overlap = None;
+    }
+
+    #[func]
+    pub fn on_far_body_overlap(&mut self, node: Gd<Node>) {
+        self.far_overlap = Some(node);
+    }
+
+    #[func]
+    pub fn on_far_body_exit(&mut self, _node: Gd<Node>) {
+        self.far_overlap = None;
     }
 }

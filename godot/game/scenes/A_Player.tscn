@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://d3lvfs15cr1aw"]
+[gd_scene load_steps=11 format=3 uid="uid://d3lvfs15cr1aw"]
 
 [ext_resource type="PackedScene" uid="uid://b8h5rbnduiktg" path="res://game/scenes/FX_Explosion.tscn" id="1_v3opp"]
 
@@ -13,7 +13,7 @@ albedo_color = Color(0.90321, 0, 0.107648, 1)
 material = SubResource("StandardMaterial3D_105l1")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3se31"]
-size = Vector3(4, 0.2, 0.9)
+size = Vector3(3.8, 0.2, 0.4)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_58yrd"]
 albedo_color = Color(0.0729295, 0.363807, 0.747272, 1)
@@ -22,14 +22,23 @@ albedo_color = Color(0.0729295, 0.363807, 0.747272, 1)
 material = SubResource("StandardMaterial3D_58yrd")
 size = Vector3(4, 0.2, 0.9)
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_llvwh"]
+radius = 6.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_gheer"]
+radius = 4.0
+
 [node name="APlayer" type="Player" node_paths=PackedStringArray("camera_target", "respawn_timer")]
-roll_speed_h = 4.0
-pitch_speed_v = 0.6
-yaw_speed_h = 4.0
+roll_speed_h = 300.0
+pitch_speed_v = 40.0
+yaw_speed_h = 300.0
 camera_target = NodePath("CameraTarget")
 explosion_scene = ExtResource("1_v3opp")
 respawn_timer = NodePath("Timer")
+close_points_per_sec = 100.0
+far_points_per_sec = 50.0
 physics_interpolation_mode = 1
+collision_layer = 2
 physics_material_override = SubResource("PhysicsMaterial_2x886")
 center_of_mass_mode = 1
 continuous_cd = true
@@ -56,5 +65,26 @@ mesh = SubResource("BoxMesh_ske5f")
 skeleton = NodePath("../..")
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 2.0
+wait_time = 3.0
 one_shot = true
+
+[node name="FarArea" type="Area3D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FarArea"]
+shape = SubResource("SphereShape3D_llvwh")
+
+[node name="CloseArea" type="Area3D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CloseArea"]
+shape = SubResource("SphereShape3D_gheer")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_energy = 5.159
+omni_range = 57.104
+
+[connection signal="body_entered" from="FarArea" to="." method="on_far_body_overlap"]
+[connection signal="body_exited" from="FarArea" to="." method="on_far_body_exit"]
+[connection signal="body_entered" from="CloseArea" to="." method="on_close_body_overlap"]
+[connection signal="body_exited" from="CloseArea" to="." method="on_close_body_exit"]

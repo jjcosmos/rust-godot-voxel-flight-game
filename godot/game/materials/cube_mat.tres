@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://bmx155jyphely"]
+
+[ext_resource type="Shader" path="res://game/materials/cube_mat.gdshader" id="1_kq5s1"]
+[ext_resource type="Texture2D" uid="uid://c0osn7tkv5lcb" path="res://game/materials/gradient_1.tres" id="2_ojsvn"]
+[ext_resource type="Texture2D" uid="uid://dl8vh63m120xt" path="res://game/materials/gradient_2.tres" id="3_41sx4"]
+[ext_resource type="Texture2D" uid="uid://m0t38i3f0e1o" path="res://game/materials/gradient_3.tres" id="4_luh22"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_kq5s1")
+shader_parameter/distance_scale = 0.001
+shader_parameter/gradient_sampler_x = ExtResource("2_ojsvn")
+shader_parameter/gradient_sampler_y = ExtResource("3_41sx4")
+shader_parameter/gradient_sampler_z = ExtResource("4_luh22")

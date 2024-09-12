@@ -5,8 +5,7 @@ const CHUNK_DIM: i32 = 16;
 
 use godot::{
     classes::{
-        mesh::{ArrayType, PrimitiveType},
-        ArrayMesh, FastNoiseLite, MeshInstance3D,
+        mesh::{ArrayType, PrimitiveType}, ArrayMesh, FastNoiseLite, MeshInstance3D, ShaderMaterial
     },
     obj::NewAlloc,
     prelude::*,
@@ -42,6 +41,8 @@ struct CubeSpawner {
     view_range: i32,
     #[export]
     player: Option<Gd<Player>>,
+    #[export]
+    material: Option<Gd<ShaderMaterial>>,
     chunks: HashMap<Vector3i, Chunk>,
     player_last_chunk: Vector3i,
     chunk_operation_queue: Vec<ChunkOperation>,
@@ -61,6 +62,7 @@ impl INode3D for CubeSpawner {
             first_load: true,
             base,
 
+            material: None,
             player: None,
             player_last_chunk: Vector3i::ZERO * 10000,
             chunks: HashMap::new(),
@@ -104,9 +106,6 @@ impl CubeSpawner {
     #[signal]
     fn load_complete() {}
 
-    #[signal]
-    fn current_chunk_changed(chunk_idex: Vector3i) {}
-
     fn try_operate(&mut self) {
         if let Some(op) = self.chunk_operation_queue.pop() {
             if op.create && self.chunks.contains_key(&op.position) {
@@ -141,11 +140,11 @@ impl CubeSpawner {
         };
 
         let player_pos = player.get_global_position();
-        let current_chunk = Vector3i {
+        let current_chunk = if player.bind().is_dead {Vector3i::ZERO} else {Vector3i {
             x: (player_pos.x / (CHUNK_DIM * self.mesh_size) as f32) as i32,
             y: (player_pos.y / (CHUNK_DIM * self.mesh_size) as f32) as i32,
             z: (player_pos.z / (CHUNK_DIM * self.mesh_size) as f32) as i32,
-        };
+        }};
 
         //godot_print!("Current chunk position is {}. Last is {}", current_chunk, self.player_last_chunk);
 
@@ -281,6 +280,7 @@ impl CubeSpawner {
             chunk
                 .array_mesh
                 .add_surface_from_arrays(PrimitiveType::TRIANGLES, array);
+            chunk.array_mesh.surface_set_material(0, self.get_material());
             chunk.mesh_inst.set_mesh(chunk.array_mesh);
             chunk.mesh_inst.create_trimesh_collision();
         }
